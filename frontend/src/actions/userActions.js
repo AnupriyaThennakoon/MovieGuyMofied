@@ -31,6 +31,8 @@ import {
   CLEAR_PAYMENT_DETAILS, 
 } from '../constants/cartConstants'
 
+import jwtDecode from 'jwt-decode'
+
 export const Sign_In = (email, password) => async (dispatch) => {
   try {
     dispatch({
@@ -286,3 +288,35 @@ export const clearPaymentDetails = () => (dispatch) => {
 //     type: CLEAR_SIGNIN_ERROR,
 //   });
 // };
+
+export const google_Sign_In = (response) => async (dispatch) => {
+  try {
+    dispatch({
+      type: USER_SIGIN_REQUEST,
+    })
+
+    var decoded = jwtDecode(response.credential)
+
+    const data = {
+      name : decoded.given_name,
+      email : decoded.email,
+      isAdmin : false
+    }
+
+    dispatch({
+      type: USER_SIGIN_SUCCESS,
+      payload: data,
+    })
+
+    localStorage.setItem('userDetails', data)
+  }
+  catch (error) {
+    dispatch({
+      type: USER_SIGIN_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    })
+  }
+}

@@ -5,8 +5,9 @@ import FormC from '../components/Form_layout'
 import { useDispatch, useSelector } from 'react-redux'
 import Alertmsg from '../components/Alert'
 import Buffer from '../components/buffer'
-import  {Sign_In}  from '../actions/userActions'
 //import { clearSigninError } from '../actions/userActions';
+import  {Sign_In, google_Sign_In}  from '../actions/userActions'
+import { GoogleLogin } from '@react-oauth/google'
 
 const SignInView = ({ location, history }) => {
   const [email, setUsername] = useState('')
@@ -47,6 +48,15 @@ const SignInView = ({ location, history }) => {
     window.location.reload();
   };
 
+  const googleLoginSuccess = (response) => {
+    console.log('Google login success:', response);
+    dispatch(google_Sign_In(response));
+  };
+
+  const googleLoginFailure = (response) => {
+    console.log('Google login error:', response);
+  };
+
   return (
     <FormC>
       <h1>Sign in to the account</h1>
@@ -76,7 +86,17 @@ const SignInView = ({ location, history }) => {
         <br></br>
         <Button type='submit' variant='primary'>
           Log In
-        </Button><br></br><br></br>
+        </Button>
+        <br></br> <br></br>
+        <Row className='my=6'>
+        <Col>
+          <GoogleLogin
+            onSuccess={googleLoginSuccess}
+            onError={googleLoginFailure}
+          />
+        </Col>
+      </Row>
+        <br></br>
         <Button type='button' variant='secondary' onClick={refreshPage}>
           Clear
         </Button>
